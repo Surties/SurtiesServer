@@ -83,7 +83,7 @@ const authFunction = async (user, res) => {
     { id: user._id, role: user.role, email: user.email },
     JWT_SECERT
   );
-
+  console.log(token);
   return res
     .cookie("access_token", token, {
       httpOnly: true,

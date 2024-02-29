@@ -12,7 +12,9 @@ const careerRoutes = require("./Career/career.routes");
 const newsRoutes = require("./News/news.routes");
 const contact = require("./Contactus/contactus");
 const sliderRoutes = require("./ImagesSlider/imageSlider.routes");
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(
+  cors({ credentials: true, origin: "https://super-pony-f201ae.netlify.app/" })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/auth", authRoutes);
