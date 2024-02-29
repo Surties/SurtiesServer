@@ -6,6 +6,7 @@ dotenv.config();
 const PORT = process.env.PORT;
 const DB = process.env.DB;
 const app = express();
+const newLast = "astkkkn";
 const authRoutes = require("./Auth/auth.routes");
 const careerRoutes = require("./Career/career.routes");
 const newsRoutes = require("./News/news.routes");
