@@ -6,13 +6,15 @@ dotenv.config();
 const PORT = process.env.PORT;
 const DB = process.env.DB;
 const app = express();
-const newLast = "astkkkn";
+
 const authRoutes = require("./Auth/auth.routes");
 const careerRoutes = require("./Career/career.routes");
 const newsRoutes = require("./News/news.routes");
 const contact = require("./Contactus/contactus");
 const sliderRoutes = require("./ImagesSlider/imageSlider.routes");
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(
+  cors({ credentials: true, origin: "https://surtiesserver.onrender.com" })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/auth", authRoutes);
