@@ -89,6 +89,7 @@ const authFunction = async (user, res) => {
       httpOnly: true,
       secure: true,
       // domain",
+      sameSite: "strict",
       expires: new Date(Date.now() + 360000 * 27 * 7),
       path: "/",
     })
