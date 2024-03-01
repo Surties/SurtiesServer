@@ -88,7 +88,6 @@ const authFunction = async (user, res) => {
     .cookie("access_token", token, {
       httpOnly: true,
       secure: true,
-      // domain",
       sameSite: "none",
       expires: new Date(Date.now() + 360000 * 27 * 7),
       path: "/",
