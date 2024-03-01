@@ -16,7 +16,7 @@ app.use(
   cors({
     credentials: true,
     origin:
-      "https://65e16375dd701578fa9cf208--wondrous-speculoos-5da158.netlify.app",
+      "https://65e16dba782a5187d430ffe4--wondrous-speculoos-5da158.netlify.app/",
   })
 );
 app.use(express.json());

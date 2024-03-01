@@ -151,7 +151,7 @@ app.post("/signin", async (req, res) => {
   const { email, pass } = req.body;
 
   const user = await UserModel.findOne({ email });
-  // console.log(email);
+
   if (!user) {
     return res.status(404).send({ msg: "User not found", auth: false });
   }
