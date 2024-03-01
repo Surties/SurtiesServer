@@ -88,7 +88,7 @@ const authFunction = async (user, res) => {
     .cookie("access_token", token, {
       httpOnly: true,
       secure: true,
-      domain: "wondrous-speculoos-5da158.netlify.app",
+      // domain",
       expires: new Date(Date.now() + 360000 * 27 * 7),
       path: "/",
     })
