@@ -15,8 +15,7 @@ const sliderRoutes = require("./ImagesSlider/imageSlider.routes");
 app.use(
   cors({
     credentials: true,
-    origin:
-      "https://65e16dba782a5187d430ffe4--wondrous-speculoos-5da158.netlify.app/",
+    origin: "https://wondrous-speculoos-5da158.netlify.app",
   })
 );
 app.use(express.json());
