@@ -13,7 +13,11 @@ const newsRoutes = require("./News/news.routes");
 const contact = require("./Contactus/contactus");
 const sliderRoutes = require("./ImagesSlider/imageSlider.routes");
 app.use(
-  cors({ credentials: true, origin: "https://super-pony-f201ae.netlify.app" })
+  cors({
+    credentials: true,
+    origin:
+      "https://65e16375dd701578fa9cf208--wondrous-speculoos-5da158.netlify.app/",
+  })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
