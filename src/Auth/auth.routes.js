@@ -90,6 +90,7 @@ const authFunction = async (user, res) => {
       secure: true,
       domain: "wondrous-speculoos-5da158.netlify.app",
       expires: new Date(Date.now() + 360000 * 27 * 7),
+      path: "/",
     })
     .status(200)
     .json({
