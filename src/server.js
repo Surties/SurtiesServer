@@ -15,7 +15,10 @@ const sliderRoutes = require("./ImagesSlider/imageSlider.routes");
 app.use(
   cors({
     credentials: true,
-    origin: "https://bucolic-brioche-b29257.netlify.app",
+    origin: [
+      "https://main--bucolic-brioche-b29257.netlify.app",
+      "http://localhost:3000",
+    ],
   })
 );
 app.use(express.json());
