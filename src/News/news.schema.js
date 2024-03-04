@@ -5,7 +5,7 @@ const newsSchema = new mongoose.Schema({
   thumbnail: String,
   imgs: [String],
   author: String,
-  date: { type: String, default: Date.now() },
+  date: { type: String, default: new Date(Date.now()) },
   trending: String,
   numberOfClick: Number,
   catagory: [String],

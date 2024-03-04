@@ -7,7 +7,7 @@ const PASS = process.env.PASS;
 const app = express();
 
 app.post("/", async (req, res) => {
-  const { email, name, phoneNumber, message, subject } = req.body;
+  const { email, name, mobile, message, subject } = req.body;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -31,7 +31,7 @@ app.post("/", async (req, res) => {
 
       <p>Email: <span">${email}</span></p>
       <p>Name: <span >${name}</span></p>
-      <p>Phone Number: <span >${phoneNumber}</span></p>
+      <p>Phone Number: <span >${mobile}</span></p>
       <p>message: <span >${message}</span></p>
       `,
   };
@@ -48,6 +48,6 @@ app.post("/", async (req, res) => {
     }
   };
   sendMail(transporter, mailOption);
-  return res.status(200).send("");
+  return res.status(200).send("mail has been sent");
 });
 module.exports = app;
