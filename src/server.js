@@ -19,6 +19,7 @@ app.use(
       "https://main--bucolic-brioche-b29257.netlify.app",
       "http://localhost:3000",
       "https://bucolic-brioche-b29257.netlify.app",
+      "https://surties.netlify.app",
     ],
   })
 );
