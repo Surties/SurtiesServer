@@ -10,6 +10,7 @@ const newsSchema = new mongoose.Schema({
   numberOfClick: Number,
   catagory: [String],
   article: String,
+  clicks: { type: Number, default: 0 },
 });
 const NewsModel = mongoose.model("news", newsSchema);
 module.exports = NewsModel;

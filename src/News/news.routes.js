@@ -61,6 +61,24 @@ app.get("/", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.get("/topweek", async (req, res) => {
+  try {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const result = await NewsModel.aggregate([
+      { $match: { date: { $gte: oneWeekAgo } } },
+      { $group: { _id: "$_id", totalClicks: { $sum: "$clicks" } } },
+      { $sort: { totalClicks: -1 } },
+    ]);
+    const topPostIds = result.map((item) => item._id);
+    const topPosts = await NewsModel.find({ _id: { $in: topPostIds } });
+
+    res.json(topPosts);
+  } catch (error) {
+    console.error("Error fetching top posts:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 app.get("/grouped", async (req, res) => {
   try {
     const categories = await NewsModel.distinct("catagory", {});
