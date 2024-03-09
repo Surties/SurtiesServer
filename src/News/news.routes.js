@@ -143,7 +143,21 @@ app.patch("/:id", isEditor, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.patch("/topweek", async (req, res) => {
+  const id = req.params.id;
 
+  try {
+    const news = await NewsModel.findByIdAndUpdate(id, { $inc: { clicks: 1 } });
+
+    if (!news) {
+      return res.status(404).json({ message: "News not found" });
+    }
+    res.json({ message: "News has been updated" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.delete("/:id", isEditor, async (req, res) => {
   const id = req.params.id;
   try {
