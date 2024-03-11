@@ -4,7 +4,7 @@ const newsSchema = new mongoose.Schema({
   subHeading: String,
   thumbnail: String,
   imgs: [String],
-  instaPost: String,
+  instaLink: String,
   author: String,
   date: { type: String, default: new Date(Date.now()) },
   trending: String,
