@@ -143,7 +143,7 @@ app.patch("/:id", isEditor, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-app.patch("/topweek", async (req, res) => {
+app.patch("/topweek/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
