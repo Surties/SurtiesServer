@@ -3,6 +3,7 @@ const newsSchema = new mongoose.Schema({
   heading: String,
   subHeading: String,
   thumbnail: String,
+  time: { type: String, default: Date.now() },
   imgs: [String],
   instaLink: String,
   author: String,
