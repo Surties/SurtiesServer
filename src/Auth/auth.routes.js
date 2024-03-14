@@ -221,20 +221,19 @@ app.post("/signin", async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const { name, email, pass } = req.body;
-
+  const { firstName, lastName, email, pass } = req.body;
+  const name = `${firstName} ${lastName}`;
   try {
     const eUser = await UserModel.findOne({ email });
     if (eUser) {
       return res.status(409).send({ error: "Email already registered" });
     }
-    // console.log(eUser);
+
     const hash = await bcrypt.hash(pass, 10);
     const user = new UserModel({
       name,
       email,
       pass: hash,
-      score: [],
     });
     await user.save();
 
