@@ -16,12 +16,7 @@ const emailList = require("./NewsSub/EmailList.routes");
 app.use(
   cors({
     credentials: true,
-    origin: [
-      "https://main--bucolic-brioche-b29257.netlify.app",
-      "http://localhost:3000",
-      "https://bucolic-brioche-b29257.netlify.app",
-      "https://surties.netlify.app",
-    ],
+    origin: ["http://surties.in/", "https://surties.netlify.app"],
   })
 );
 app.use(express.json());
