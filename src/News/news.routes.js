@@ -113,7 +113,7 @@ app.get("/:id", async (req, res) => {
 
 app.post("/", async (req, res) => {
   const newNews = req.body;
-  console.log(newNews);
+
   try {
     const news = new NewsModel(newNews);
     await news.save();

@@ -12,6 +12,7 @@ const careerRoutes = require("./Career/career.routes");
 const newsRoutes = require("./News/news.routes");
 const contact = require("./Contactus/contactus");
 const sliderRoutes = require("./ImagesSlider/imageSlider.routes");
+const emailList = require("./NewsSub/EmailList.routes");
 app.use(
   cors({
     credentials: true,
@@ -30,6 +31,7 @@ app.use("/career", careerRoutes);
 app.use("/news", newsRoutes);
 app.use("/slider", sliderRoutes);
 app.use("/contact-us", contact);
+app.use("/email-list", emailList);
 mongoose.connect(DB).then(() => {
   app.listen(PORT, () => {
     console.log(`server started on ${PORT}`);
