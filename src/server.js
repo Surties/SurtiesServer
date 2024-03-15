@@ -17,7 +17,7 @@ app.use(
   cors({
     credentials: true,
     origin: [
-      "http://surties.in/",
+      "http://surties.in",
       "https://surties.netlify.app",
       "http://localhost:3000",
     ],
