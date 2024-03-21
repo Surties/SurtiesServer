@@ -139,6 +139,7 @@ app.patch("/:id", isEditor, async (req, res) => {
   }
 });
 app.patch("/topweek/:id", async (req, res) => {
+  console.log("last");
   const id = req.params.id;
   console.log(id);
   try {
