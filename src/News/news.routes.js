@@ -110,7 +110,9 @@ app.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
+app.get('/breaking-news', (req, response) => {
+  
+})
 app.post("/", async (req, res) => {
   const newNews = req.body;
 

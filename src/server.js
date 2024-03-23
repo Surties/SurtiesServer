@@ -18,7 +18,7 @@ app.use(
     credentials: true,
     origin: [
       "https://surties.in",
-      "https://surties.netlify.app",
+     
       "http://localhost:3000",
     ],
   })
