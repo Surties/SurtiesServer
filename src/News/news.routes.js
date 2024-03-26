@@ -64,7 +64,7 @@ app.get("/", async (req, res) => {
 app.get("/topweek", async (req, res) => {
   try {
     const oneWeekAgo = new Date() - 7 * 24 * 60 * 60 * 1000;
-    console.log(oneWeekAgo);
+
     const popularNews = await NewsModel.find({ time: { $gte: oneWeekAgo } })
       .sort({ clicks: -1 })
       .limit(4);
@@ -98,7 +98,29 @@ app.get("/grouped", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
+app.get("/breaking-news", async (req, res) => {
+  try {
+    const breakingNews = await NewsModel.find({ breaking: true })
+      .sort({ time: -1 })
+      .limit(10);
+    
+    res.status(200).send(breakingNews);
+  } catch (error) {
+    console.error("Error fetching breaking news:", error);
+    res.status(500).send({ message: "Something went wrong" });
+  }
+});
+app.get("/slider", async (req, res) => {
+  try {
+    const slider = await NewsModel.find({ trending: true })
+      .sort({ time: -1 })
+      .limit(10);
+    res.status(200).json(slider);
+  } catch (error) {
+    console.error("Error fetching slider:", error);
+    res.status(500).send({ message: "Something went wrong" });
+  }
+});
 app.get("/:id", async (req, res) => {
   const id = req.params.id;
 
@@ -110,9 +132,7 @@ app.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-app.get('/breaking-news', (req, response) => {
-  
-})
+
 app.post("/", async (req, res) => {
   const newNews = req.body;
 
