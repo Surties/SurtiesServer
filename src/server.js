@@ -11,16 +11,12 @@ const authRoutes = require("./Auth/auth.routes");
 const careerRoutes = require("./Career/career.routes");
 const newsRoutes = require("./News/news.routes");
 const contact = require("./Contactus/contactus");
-const sliderRoutes = require("./ImagesSlider/imageSlider.routes");
+
 const emailList = require("./NewsSub/EmailList.routes");
 app.use(
   cors({
     credentials: true,
-    origin: [
-      "https://surties.in",
-     
-      "http://localhost:3000",
-    ],
+    origin: ["https://surties.in", "http://localhost:3000"],
   })
 );
 app.use(express.json());
@@ -28,7 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/auth", authRoutes);
 app.use("/career", careerRoutes);
 app.use("/news", newsRoutes);
-app.use("/slider", sliderRoutes);
+
 app.use("/contact-us", contact);
 app.use("/email-list", emailList);
 mongoose.connect(DB).then(() => {

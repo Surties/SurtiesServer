@@ -51,7 +51,7 @@ app.post("/", async (req, res) => {
     try {
       await transporter.sendMail(mailOption);
     } catch (error) {
-      console.log(error);
+      
       return res
         .status(500)
         .send(

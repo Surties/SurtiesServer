@@ -161,9 +161,9 @@ app.patch("/:id", isEditor, async (req, res) => {
   }
 });
 app.patch("/topweek/:id", async (req, res) => {
-  console.log("last");
+
   const id = req.params.id;
-  console.log(id);
+ 
   try {
     const news = await NewsModel.findByIdAndUpdate(
       { _id: id },
@@ -189,7 +189,7 @@ app.delete("/:id", isEditor, async (req, res) => {
     }
     res.json({ message: "news deleted successfully" });
   } catch (err) {
-    console.log(err);
+    
     res.status(500).json({ message: err.message });
   }
 });

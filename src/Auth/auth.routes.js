@@ -83,7 +83,7 @@ const authFunction = async (user, res) => {
     { id: user._id, role: user.role, email: user.email },
     JWT_SECERT
   );
-  console.log(token);
+ 
   return res
     .cookie("access_token", token, {
       httpOnly: true,
@@ -112,7 +112,7 @@ const authFunction = async (user, res) => {
 //     JWT_SECERT,
 //     (err, user) => {
 //       if (err) {
-//         console.log(err);
+//         
 //         return res.status(403).json({ message: "Authentication failed" });
 //       }
 //       res.clearCookie(`${user._id}`);
@@ -241,6 +241,17 @@ app.post("/signup", async (req, res) => {
   } catch (e) {
     return res.status(500).send({ error: "An error occurred during signup" });
   }
+});
+app.get("/logout", (req, res) => {
+  res.clearCookie("access_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    expires: new Date(0),
+    path: "/",
+  });
+
+  res.status(200).json({ msg: "Logout successful", auth: false });
 });
 app.post("/oauth", async (req, res) => {
   const user = await UserModel.find({ email: req.body.email });
