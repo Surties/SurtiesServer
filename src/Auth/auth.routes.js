@@ -134,7 +134,7 @@ const authFunction = async (user, res) => {
     .json({
       msg: "LOGIN SUCCESS",
       auth: true,
-      email: uswr.email,
+      email: user.email,
       userName: user.name,
       id: user._id,
       role: user.role,
