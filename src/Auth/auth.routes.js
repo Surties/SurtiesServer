@@ -262,7 +262,7 @@ app.post("/signin", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
   const { firstName, lastName, email, pass } = req.body;
-  const name = `${firstName} ${lastName}`;
+
   try {
     const eUser = await UserModel.findOne({ email });
     if (eUser) {
