@@ -36,6 +36,34 @@ const isAdmin = async (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
+const isUserValid = async (req, res, next) => {
+  const { id } = req.params;
+  const { email } = req.query;
+
+  try {
+    const cookie = req.headers.cookie;
+    if (!cookie) {
+      return res.status(404).json({ message: "No Cookie" });
+    }
+    const token = cookie.split("=")[1];
+
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
+    }
+    const decoded = jwt.verify(token, JWT_SECERT);
+
+    if (decoded.email !== email) {
+      return res.status(403).json({ message: "invalid Token " });
+    }
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+  }
+};
 app.get("/", isAdmin, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -61,6 +89,16 @@ app.get("/", isAdmin, async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.get("/:id", isUserValid, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await UserModel.findOne({ _id: id });
+    return res.send(user);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 const verifyToken = (req, res, next) => {
   const cookie = req.headers.cookie;
   if (!cookie) {
@@ -83,7 +121,7 @@ const authFunction = async (user, res) => {
     { id: user._id, role: user.role, email: user.email },
     JWT_SECERT
   );
- 
+
   return res
     .cookie("access_token", token, {
       httpOnly: true,
@@ -96,9 +134,11 @@ const authFunction = async (user, res) => {
     .json({
       msg: "LOGIN SUCCESS",
       auth: true,
+      email: uswr.email,
       userName: user.name,
       id: user._id,
       role: user.role,
+      profile: user.profilePic,
     });
 };
 // app.get("/refresh-token", (req, res) => {
@@ -112,7 +152,7 @@ const authFunction = async (user, res) => {
 //     JWT_SECERT,
 //     (err, user) => {
 //       if (err) {
-//         
+//
 //         return res.status(403).json({ message: "Authentication failed" });
 //       }
 //       res.clearCookie(`${user._id}`);
