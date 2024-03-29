@@ -93,9 +93,9 @@ app.get("/:id", isUserValid, async (req, res) => {
   const { id } = req.params;
   try {
     const user = await UserModel.findOne({ _id: id });
-    return res.send(user);
+    return res.status(200).send(user);
   } catch (err) {
-    console.log(err);
+    return res.status(400).send({ err: err });
   }
 });
 
@@ -305,13 +305,15 @@ app.post("/oauth", async (req, res) => {
 });
 app.patch("/user/:id", async (req, res) => {
   const id = req.params.id;
+  const params = req.params.email;
   const { profilePic, name, email } = req.body;
+
   try {
     const user = await UserModel.findByIdAndUpdate(
       { _id: id },
       { profilePic, name, email }
     );
-    console.log(user);
+    res.status(200).send({ message: "user is updated" });
   } catch (err) {
     console.log(err);
   }
