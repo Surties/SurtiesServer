@@ -6,7 +6,7 @@ const UserSchema = new Schema({
   profilePic: {
     type: String,
     default:
-      "https://firebasestorage.googleapis.com/v0/b/surtiestest2.appspot.com/o/images%2Fpng-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes-4180903902-removebg-preview%20(1).png?alt=media&token=9386383b-e524-45a9-8db2-ed462548d6e2",
+      "https://firebasestorage.googleapis.com/v0/b/surtieswebapplication.appspot.com/o/Assets%2Fman.svg?alt=media&token=e8791da4-7514-4695-9dd5-6cb9e0277409",
   },
   age: Number,
   loginAttempts: {

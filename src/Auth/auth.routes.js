@@ -138,7 +138,7 @@ const authFunction = async (user, res) => {
       userName: user.name,
       id: user._id,
       role: user.role,
-      profile: user.profilePic,
+      profilePic: user.profilePic,
     });
 };
 // app.get("/refresh-token", (req, res) => {
@@ -261,7 +261,7 @@ app.post("/signin", async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const { firstName, lastName, email, pass } = req.body;
+  const { name, email, pass } = req.body;
 
   try {
     const eUser = await UserModel.findOne({ email });
@@ -303,7 +303,19 @@ app.post("/oauth", async (req, res) => {
     });
   }
 });
-
+app.patch("/user/:id", async (req, res) => {
+  const id = req.params.id;
+  const { profilePic, name, email } = req.body;
+  try {
+    const user = await UserModel.findByIdAndUpdate(
+      { _id: id },
+      { profilePic, name, email }
+    );
+    console.log(user);
+  } catch (err) {
+    console.log(err);
+  }
+});
 app.patch("/:id", isAdmin, async (req, res) => {
   try {
     const userId = req.params.id;
