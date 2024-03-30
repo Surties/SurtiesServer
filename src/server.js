@@ -17,7 +17,11 @@ const emailList = require("./NewsSub/EmailList.routes");
 app.use(
   cors({
     credentials: true,
-    origin: ["https://surties.in", "http://localhost:3000"],
+    origin: [
+      "https://surties.in",
+      "http://localhost:3000",
+      "https://main--surties.netlify.app/",
+    ],
   })
 );
 app.use(express.json());
