@@ -20,7 +20,7 @@ app.use(
     origin: [
       "https://surties.in",
       "http://localhost:3000",
-      "https://main--surties.netlify.app/",
+      "https://main--surties.netlify.app",
     ],
   })
 );
