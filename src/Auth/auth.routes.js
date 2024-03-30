@@ -1,13 +1,18 @@
 const express = require("express");
 const UserModel = require("../Auth/auth.schema");
 const app = express();
+const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 dotenv.config();
+const USER = process.env.USER;
+const PASS = process.env.PASS;
+app.set("view engine", "ejs");
 app.use(express.json());
+
 const JWT_SECERT = process.env.JWT_SECERT;
 const isAdmin = async (req, res, next) => {
   try {
@@ -64,6 +69,7 @@ const isUserValid = async (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
+
 app.get("/", isAdmin, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -259,7 +265,91 @@ app.post("/signin", async (req, res) => {
     authFunction(user, res);
   }
 });
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  console.log(email, USER);
 
+  try {
+    const oldDetails = await UserModel.findOne({ email });
+    if (!oldDetails) {
+      return res.status(404).send({ message: "user does not exits" });
+    }
+
+    const token = jwt.sign(
+      { email: oldDetails.email, _id: oldDetails._id },
+      JWT_SECERT
+    );
+
+    const link = `https://surtiesserver.onrender.com/auth/reset-pass/${oldDetails._id}/${token}`;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.net",
+      port: 465,
+      secure: true,
+      auth: {
+        user: USER,
+        pass: PASS,
+      },
+    });
+    const mailOption = {
+      from: USER,
+      to: email,
+      subject: `${"Reset Your Password"}`,
+      text: link,
+    };
+    const sendMail = async (transporter, mailOption) => {
+      try {
+        await transporter.sendMail(mailOption);
+      } catch (error) {
+        console.log(error);
+        return res
+          .status(500)
+          .send(
+            "The server encountered an unexpected condition that prevented it from fulfilling the request."
+          );
+      }
+    };
+    sendMail(transporter, mailOption);
+    return res.status(200).send("mail has been sent");
+  } catch (err) {
+    console.log(err);
+  }
+});
+app.get("/reset-pass/:id/:token", async (req, res) => {
+  const { id, token } = req.params;
+  const oldDetails = await UserModel.findOne({ _id: id });
+  if (!oldDetails) {
+    return res.status(404).send({ message: "user not found" });
+  }
+  try {
+    const verify = jwt.verify(token, JWT_SECERT);
+    res.render("index", { email: verify.email });
+  } catch (e) {
+    res.status(404).send({ message: "Not verified" });
+  }
+});
+app.post("/reset-pass/:id/:token", async (req, res) => {
+  const { id, token } = req.params;
+  const { pass } = req.body;
+  const oldDetails = await UserModel.findOne({ _id: id });
+  if (!oldDetails) {
+    return res.status(404).send({ message: "user not found" });
+  }
+  try {
+    const hash = await bcrypt.hash(pass, 10);
+    const verify = jwt.verify(token, JWT_SECERT);
+    await UserModel.updateOne(
+      { _id: id },
+      {
+        pass: hash,
+      }
+    );
+    res.status(200).send({ message: "password updated" });
+  } catch (e) {
+    console.log(e);
+    res.status(404).send({ message: "Not verified" });
+  }
+});
 app.post("/signup", async (req, res) => {
   const { name, email, pass } = req.body;
 

@@ -6,7 +6,8 @@ dotenv.config();
 const PORT = process.env.PORT;
 const DB = process.env.DB;
 const app = express();
-
+app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: false }));
 const authRoutes = require("./Auth/auth.routes");
 const careerRoutes = require("./Career/career.routes");
 const newsRoutes = require("./News/news.routes");
