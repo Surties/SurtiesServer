@@ -21,6 +21,7 @@ app.use(
       "https://surties.in",
       "http://localhost:3000",
       "https://main--surties.netlify.app",
+      "https://surtiesnext.vercel.app",
     ],
   })
 );
