@@ -46,11 +46,11 @@ app.get("/", async (req, res) => {
     }
 
     const totalItems = await NewsModel.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / 9);
+    const totalPages = Math.ceil(totalItems / 12);
 
     const newsItems = await NewsModel.find(query)
       .skip(skip)
-      .limit(9)
+      .limit(12)
       .sort({ date: -1 });
     res.json({
       newsItems,
@@ -103,7 +103,7 @@ app.get("/breaking-news", async (req, res) => {
     const breakingNews = await NewsModel.find({ breaking: true })
       .sort({ time: -1 })
       .limit(10);
-    
+
     res.status(200).send(breakingNews);
   } catch (error) {
     console.error("Error fetching breaking news:", error);
@@ -161,9 +161,8 @@ app.patch("/:id", isEditor, async (req, res) => {
   }
 });
 app.patch("/topweek/:id", async (req, res) => {
-
   const id = req.params.id;
- 
+
   try {
     const news = await NewsModel.findByIdAndUpdate(
       { _id: id },
@@ -189,7 +188,6 @@ app.delete("/:id", isEditor, async (req, res) => {
     }
     res.json({ message: "news deleted successfully" });
   } catch (err) {
-    
     res.status(500).json({ message: err.message });
   }
 });
