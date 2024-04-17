@@ -51,7 +51,7 @@ app.get("/", async (req, res) => {
     const newsItems = await NewsModel.find(query)
       .skip(skip)
       .limit(12)
-      .sort({ date: -1 });
+      .sort({ time: -1 });
     res.json({
       newsItems,
       totalPages,
@@ -87,7 +87,7 @@ app.get("/grouped", async (req, res) => {
           { $replaceRoot: { newRoot: "$document" } },
           { $limit: 4 },
         ]);
-
+        console.log(category, documents);
         return { category, documents };
       })
     );
