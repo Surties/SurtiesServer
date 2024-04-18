@@ -6,6 +6,8 @@ const newsSchema = new mongoose.Schema({
   time: { type: String, default: Date.now() },
   imgs: [Object],
   instaLink: String,
+  youtubeLink: String,
+  facebookLink: String,
   twitterLink: String,
   breaking: Boolean,
   author: String,
