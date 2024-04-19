@@ -69,42 +69,6 @@ const isUserValid = async (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
-
-app.get("/", isAdmin, async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 5;
-    const skip = (page - 1) * limit;
-    let searchQuery = {};
-    if (req.query.search) {
-      searchQuery = {
-        name: { $regex: new RegExp(req.query.search, "i") },
-      };
-    }
-    const users = await UserModel.find(searchQuery).skip(skip).limit(limit);
-
-    const totalUsers = await UserModel.countDocuments(searchQuery);
-    const totalPages = Math.ceil(totalUsers / limit);
-
-    return res.json({
-      users,
-      totalPages,
-    });
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-app.get("/:id", isUserValid, async (req, res) => {
-  const { id } = req.params;
-  try {
-    const user = await UserModel.findOne({ _id: id });
-    return res.status(200).send(user);
-  } catch (err) {
-    return res.status(400).send({ err: err });
-  }
-});
-
 const verifyToken = (req, res, next) => {
   const cookie = req.headers.cookie;
   if (!cookie) {
@@ -147,6 +111,85 @@ const authFunction = async (user, res) => {
       profilePic: user.profilePic,
     });
 };
+app.get("/", isAdmin, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+    let searchQuery = {};
+    if (req.query.search) {
+      searchQuery = {
+        name: { $regex: new RegExp(req.query.search, "i") },
+      };
+    }
+    const users = await UserModel.find(searchQuery).skip(skip).limit(limit);
+
+    const totalUsers = await UserModel.countDocuments(searchQuery);
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    return res.json({
+      users,
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/signin-token", verifyToken, async (req, res) => {
+  const userId = req.id;
+
+  let user;
+  try {
+    user = await UserModel.findById(userId, "-pass");
+  } catch (err) {
+    return new Error(err);
+  }
+  if (!user) {
+    return res.status(404).json({ message: "user not found" });
+  }
+  return res.status(200).json({
+    msg: "LOGIN SUCCESS",
+    auth: true,
+    userName: user.name,
+    id: user._id,
+    role: user.role,
+  });
+});
+app.get("/logout", (req, res) => {
+  res.clearCookie("access_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    expires: new Date(0),
+    path: "/",
+  });
+
+  res.status(200).json({ msg: "Logout successful", auth: false });
+});
+app.get("/:id", isUserValid, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await UserModel.findOne({ _id: id });
+    return res.status(200).send(user);
+  } catch (err) {
+    return res.status(400).send({ err: err });
+  }
+});
+
+app.get("/reset-pass/:id/:token", async (req, res) => {
+  const { id, token } = req.params;
+  const oldDetails = await UserModel.findOne({ _id: id });
+  if (!oldDetails) {
+    return res.status(404).send({ message: "user not found" });
+  }
+  try {
+    const verify = jwt.verify(token, JWT_SECERT);
+    res.render("index", { email: verify.email });
+  } catch (e) {
+    res.status(404).send({ message: "Not verified" });
+  }
+});
 // app.get("/refresh-token", (req, res) => {
 //   const cookie = req.headers.cookie;
 //   const prevToken = cookie.split("=")[1];
@@ -176,26 +219,7 @@ const authFunction = async (user, res) => {
 //     })
 //   );
 // });
-app.get("/signin-token", verifyToken, async (req, res) => {
-  const userId = req.id;
 
-  let user;
-  try {
-    user = await UserModel.findById(userId, "-pass");
-  } catch (err) {
-    return new Error(err);
-  }
-  if (!user) {
-    return res.status(404).json({ message: "user not found" });
-  }
-  return res.status(200).json({
-    msg: "LOGIN SUCCESS",
-    auth: true,
-    userName: user.name,
-    id: user._id,
-    role: user.role,
-  });
-});
 app.post("/signin", async (req, res) => {
   const { email, pass } = req.body;
 
@@ -265,6 +289,38 @@ app.post("/signin", async (req, res) => {
     authFunction(user, res);
   }
 });
+app.post("/signup", async (req, res) => {
+  const { name, email, pass } = req.body;
+
+  try {
+    const eUser = await UserModel.findOne({ email });
+    if (eUser) {
+      return res.status(409).send({ error: "Email already registered" });
+    }
+
+    const hash = await bcrypt.hash(pass, 10);
+    const user = new UserModel({
+      name,
+      email,
+      pass: hash,
+    });
+    await user.save();
+
+    return res.status(201).send({ msg: "User Created" });
+  } catch (e) {
+    return res.status(500).send({ error: "An error occurred during signup" });
+  }
+});
+app.post("/oauth", async (req, res) => {
+  const user = await UserModel.find({ email: req.body.email });
+  if (user) {
+    const token = jwt.sign({ id: user._id }, JWT_SECERT);
+    res.cookie("access_token", token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 36000000).status(200).send({}),
+    });
+  }
+});
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   console.log(email, USER);
@@ -315,19 +371,7 @@ app.post("/forgot-password", async (req, res) => {
     console.log(err);
   }
 });
-app.get("/reset-pass/:id/:token", async (req, res) => {
-  const { id, token } = req.params;
-  const oldDetails = await UserModel.findOne({ _id: id });
-  if (!oldDetails) {
-    return res.status(404).send({ message: "user not found" });
-  }
-  try {
-    const verify = jwt.verify(token, JWT_SECERT);
-    res.render("index", { email: verify.email });
-  } catch (e) {
-    res.status(404).send({ message: "Not verified" });
-  }
-});
+
 app.post("/reset-pass/:id/:token", async (req, res) => {
   const { id, token } = req.params;
   const { pass } = req.body;
@@ -350,64 +394,7 @@ app.post("/reset-pass/:id/:token", async (req, res) => {
     res.status(404).send({ message: "Not verified" });
   }
 });
-app.post("/signup", async (req, res) => {
-  const { name, email, pass } = req.body;
 
-  try {
-    const eUser = await UserModel.findOne({ email });
-    if (eUser) {
-      return res.status(409).send({ error: "Email already registered" });
-    }
-
-    const hash = await bcrypt.hash(pass, 10);
-    const user = new UserModel({
-      name,
-      email,
-      pass: hash,
-    });
-    await user.save();
-
-    return res.status(201).send({ msg: "User Created" });
-  } catch (e) {
-    return res.status(500).send({ error: "An error occurred during signup" });
-  }
-});
-app.get("/logout", (req, res) => {
-  res.clearCookie("access_token", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    expires: new Date(0),
-    path: "/",
-  });
-
-  res.status(200).json({ msg: "Logout successful", auth: false });
-});
-app.post("/oauth", async (req, res) => {
-  const user = await UserModel.find({ email: req.body.email });
-  if (user) {
-    const token = jwt.sign({ id: user._id }, JWT_SECERT);
-    res.cookie("access_token", token, {
-      httpOnly: true,
-      expires: new Date(Date.now() + 36000000).status(200).send({}),
-    });
-  }
-});
-app.patch("/user/:id", async (req, res) => {
-  const id = req.params.id;
-  const params = req.params.email;
-  const { profilePic, name, email } = req.body;
-
-  try {
-    const user = await UserModel.findByIdAndUpdate(
-      { _id: id },
-      { profilePic, name, email }
-    );
-    res.status(200).send({ message: "user is updated" });
-  } catch (err) {
-    console.log(err);
-  }
-});
 app.patch("/:id", isAdmin, async (req, res) => {
   try {
     const userId = req.params.id;
@@ -438,4 +425,20 @@ app.patch("/:id", isAdmin, async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+app.patch("/user/:id", async (req, res) => {
+  const id = req.params.id;
+  const params = req.params.email;
+  const { profilePic, name, email } = req.body;
+
+  try {
+    const user = await UserModel.findByIdAndUpdate(
+      { _id: id },
+      { profilePic, name, email }
+    );
+    res.status(200).send({ message: "user is updated" });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = app;
