@@ -100,27 +100,64 @@ app.get("/grouped", async (req, res) => {
 });
 app.get("/breaking-news", async (req, res) => {
   try {
+    // Default page number is 1 and items per page is 12
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
     const breakingNews = await NewsModel.find({ breaking: true })
       .sort({ time: -1 })
-      .limit(12);
+      .skip(startIndex)
+      .limit(limit);
 
-    res.status(200).send(breakingNews);
+    const totalItems = await NewsModel.countDocuments({ breaking: true });
+
+    const response = {
+      totalItems: totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      currentPage: page,
+      breakingNews: breakingNews,
+    };
+
+    res.status(200).send(response);
   } catch (error) {
     console.error("Error fetching breaking news:", error);
     res.status(500).send({ message: "Something went wrong" });
   }
 });
+
 app.get("/slider", async (req, res) => {
   try {
+    // Default page number is 1 and items per page is 12
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
     const slider = await NewsModel.find({ trending: true })
       .sort({ time: -1 })
-      .limit(12);
-    res.status(200).json(slider);
+      .skip(startIndex)
+      .limit(limit);
+
+    const totalItems = await NewsModel.countDocuments({ trending: true });
+
+    const response = {
+      totalItems: totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      currentPage: page,
+      slider: slider,
+    };
+
+    res.status(200).send(response);
   } catch (error) {
     console.error("Error fetching slider:", error);
     res.status(500).send({ message: "Something went wrong" });
   }
 });
+
 app.get("/:id", async (req, res) => {
   const id = req.params.id;
 
