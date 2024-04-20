@@ -133,7 +133,7 @@ app.get("/slider", async (req, res) => {
     // Default page number is 1 and items per page is 12
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 12;
-
+    console.log(page);
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
 

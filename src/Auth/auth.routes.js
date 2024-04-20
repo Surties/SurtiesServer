@@ -151,9 +151,11 @@ app.get("/signin-token", verifyToken, async (req, res) => {
   return res.status(200).json({
     msg: "LOGIN SUCCESS",
     auth: true,
+    email: user.email,
     userName: user.name,
     id: user._id,
     role: user.role,
+    profilePic: user.profilePic,
   });
 });
 app.get("/logout", (req, res) => {
