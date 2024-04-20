@@ -102,7 +102,7 @@ app.get("/breaking-news", async (req, res) => {
   try {
     const breakingNews = await NewsModel.find({ breaking: true })
       .sort({ time: -1 })
-      .limit(10);
+      .limit(12);
 
     res.status(200).send(breakingNews);
   } catch (error) {
@@ -114,7 +114,7 @@ app.get("/slider", async (req, res) => {
   try {
     const slider = await NewsModel.find({ trending: true })
       .sort({ time: -1 })
-      .limit(10);
+      .limit(12);
     res.status(200).json(slider);
   } catch (error) {
     console.error("Error fetching slider:", error);
