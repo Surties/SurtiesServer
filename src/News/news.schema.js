@@ -5,7 +5,7 @@ const newsSchema = new mongoose.Schema({
   thumbnail: String,
   time: { type: String, default: Date.now() },
   imgs: [Object],
-  embededLink:[Object],
+  embededLink: Object,
   breaking: Boolean,
   author: String,
   date: { type: String, default: new Date(Date.now()) },
